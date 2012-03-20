@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<plugin id="Dragooon:WeFB">
+  <name>Facebook</name>
+  <author email="mail@dragooon.net" url="http://smf-media.com/">Shitiz "Dragooon" Garg</author>
+  <description>Basic Facebook integration with Wedge</description>
+  <version>0.1</version>
+  
+  <required-functions>
+    <php-function>curl_init</php-function>
+    <php-function>json_decode</php-function>
+  </required-functions>
+
+  <actions>
+    <action action="facebook" function="Facebook" filename="plugin" />
+  </actions>
+
+  <hooks>
+    <function point="load_theme" function="facebook_hook_load_theme" filename="$plugindir/plugin" />
+    <function point="profile_areas" function="facebook_hook_profile_areas" filename="$plugindir/plugin" />
+
+    <provides>
+      <!--
+          facebook_register hook, called as soon as someone registers via Facebook
+          Params passed :
+            $id_member - ID of the newly created member
+            $id_facebook - Facebook ID of the member
+       -->
+      <hook type="function">facebook_register</hook>
+      <!--
+          facebook_update hook, called as soon as Facebook makes a real time update call
+          Params passed :
+            $id_member - ID of the newly created member
+            $id_facebook - Facebook ID of the member
+            $update_call - The call sent from Facebook
+       -->
+      <hook type="function">facebook_update</hook>
+    </provides>
+  </hooks>
+
+  <database>
+    <columns>
+      <column name="facebook_id" type="varchar" size="20" null="no" default="0" table="{db_prefix}members" />
+      <column name="facebook_fields" type="varchar" size="255" null="no" default="" table="{db_prefix}members" />
+    </columns>
+  </database>
+
+  <settings-page area="facebook" icon="$pluginurl/templates/images/adminicon.png">
+    <load-language file="plugin" />
+    <desc name="facebook_admin_desc" />
+    <text name="facebook_app_id" />
+    <text name="facebook_app_secret" />
+  </settings-page>
+</plugin>
