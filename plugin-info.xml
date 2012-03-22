@@ -29,9 +29,7 @@
       <!--
           facebook_update hook, called as soon as Facebook makes a real time update call
           Params passed :
-            $id_member - ID of the newly created member
-            $id_facebook - Facebook ID of the member
-            $update_call - The call sent from Facebook
+            $updates - A array with each element represented by id_member => array(id_facebook, changed_fields, allowed_fields)
        -->
       <hook type="function">facebook_update</hook>
     </provides>
