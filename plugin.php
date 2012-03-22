@@ -129,7 +129,7 @@ function Facebook_login_redirect()
 
 	redirectexit($facebook->getLoginUrl(array(
 		'redirect_uri' => $scripturl . '?action=facebook&area=login_return',
-		'scope' => 'email,user_birthday',
+		'scope' => 'email,user_birthday,read_stream,user_status,publish_stream,offline_access',
 	)));
 }
 
