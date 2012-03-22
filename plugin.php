@@ -64,6 +64,46 @@ function facebook_hook_load_theme()
 		wetem::first('sidebar', 'facebook_block');
 }
 
+ * New topic hook, will create a post on Facebook for this topic
+ *
+ * @param array $msgOptions
+ * @param array $topicOptions
+ * @param array $posterOptions
+ * @param bool $new_topic
+ */
+function facebook_hook_create_post_after($msgOptions, $topicOptions, $posterOptions, $new_topic)
+{
+	global $settings, $txt, $scripturl, $board_info, $context;
+
+	// Not a new topic? Forget about it
+	if (!$new_topic || empty($posterOptions['id']))
+		return true;
+	
+	// Get this member's information
+	$request = wesql::query('
+		SELECT facebook_id, facebook_fields
+		FROM {db_prefix}members
+		WHERE id_member = {int:member}',
+		array(
+			'member' => $posterOptions['id'],
+		)
+	);
+	list ($id_facebook, $fields) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	// Not allowed to post the topic?
+	if (empty($id_facebook) || !in_array('topictofeed', explode(',', $fields)))
+		return true;
+	
+	// Post the topic to facebook
+	$facebook = facebook_instance();
+	$facebook->api('/' . $id_facebook . '/feed', 'POST', array(
+		'message' => sprintf($txt['facebook_new_topic'], $board_info['name'], $context['forum_name']),
+		'link' => $scripturl . '?topic=' . $topicOptions['id'] . '.0',
+		'name' => $msgOptions['subject'],
+		'caption' => shorten_subject(strip_tags(parse_bbc($msgOptions['body'])), 120),
+	));
+}
 /**
  * Handles "facebook" action and routes it to the correct sub-function
  * 
