@@ -235,9 +235,10 @@ function Facebook_register()
 	else
 	{
 		downloadAvatar(str_replace('https://', 'http://', Facebook::$DOMAIN_MAP['graph']) . '/' . $_SESSION['facebook_info']['id'] . '/picture?type=large', $id_member, $settings['avatar_max_width_upload'], $settings['avatar_max_height_upload']);
+
 		updateMemberData((array) $id_member, array(
 			'facebook_id' => $_SESSION['facebook_info']['id'],
-			'facebook_fields' => 'real_name,birthdate,avatar',
+			'facebook_fields' => 'name,birthday,picture,feed,thoughttofeed,topictofeed',
 		));
 
 		// We run this since it is supposed to be run anyway
