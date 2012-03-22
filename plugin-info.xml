@@ -3,7 +3,7 @@
   <name>Facebook</name>
   <author email="mail@dragooon.net" url="http://smf-media.com/">Shitiz "Dragooon" Garg</author>
   <description>Basic Facebook integration with Wedge</description>
-  <version>0.1</version>
+  <version>1.0</version>
   
   <required-functions>
     <php-function>curl_init</php-function>

@@ -19,7 +19,7 @@
  *		ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
  *		ARISING IN ANY WAY OUT OF THE USE OR MISUSE OF THIS PACKAGE.
  *
- * @version 0.001 "We're not there yet"
+ * @version 1.0
  */
 
 if (!defined('WEDGE'))
