@@ -152,14 +152,37 @@ if (!empty($changes['feed']))
 		'q' => $queries,
 	));
 
+	$thoughts = array();
 	foreach ($changes['feed'] as $id_member => $id_facebook)
 	{
 		foreach ($result['data'] as $data)
 			if ($data['name'] == $id_member)
-				$message = $data['fql_result_set'][0]['message'];
-		if (!isset($message))
-			continue;
+				$thoughts[$id_member] = $data['fql_result_set'][0]['message'];
+	}
+
+	// Check for duplicates
+	$request = wesql::query('
+		SELECT id_member
+		FROM {db_prefix}thoughts
+		WHERE id_member IN ({array_int:members})
+			AND thought IN ({array_string:thoughts})',
+		array(
+			'members' => array_keys($thoughts),
+			'thoughts' => array_values($thoughts),
+		)
+	);
+	$duplicates = array();
+	while ($row = wesql::fetch_assoc($request))
+		$duplicates[] = $row['id_member'];
+	wesql::free_result($request);
+
+	foreach ($thoughts as $id_member => $message)
+	{
+		$id_facebook = $changes['feed'][$id_member];
 		
+		if (in_array($id_member, $duplicates))
+			continue;
+
 		wesql::query('
 			INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
 			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {string:privacy}, {int:updated}, {string:thought})',
