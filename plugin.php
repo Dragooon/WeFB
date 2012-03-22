@@ -75,8 +75,8 @@ function facebook_hook_create_post_after($msgOptions, $topicOptions, $posterOpti
 {
 	global $settings, $txt, $scripturl, $board_info, $context;
 
-	// Not a new topic? Forget about it
-	if (!$new_topic || empty($posterOptions['id']))
+	// Not a new topic? Facebook not enabled? Forget about it
+	if (!facebook_enabled() || !$new_topic || empty($posterOptions['id']))
 		return true;
 	
 	// Get this member's information
