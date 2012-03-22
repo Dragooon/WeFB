@@ -51,3 +51,16 @@ function facebook_instance()
 		'secret' => $settings['facebook_app_secret'],
 	));
 }
+
+/**
+ * Returns a freshly requested App access token from Facebook
+ * This function is redundant from BaseFacebook::getApplicationAccessToken
+ *
+ * @return string
+ */
+function facebook_app_token()
+{
+	global $settings;
+
+	return $settings['facebook_app_id'] . '|' . $settings['facebook_app_secret'];
+}

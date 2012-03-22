@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
  */
 function facebook_hook_load_theme()
 {
-	global $settings, $user_info, $scripturl;
+	global $settings, $user_info, $scripturl, $context;
 
 	loadPluginSource('Dragooon:WeFB', array('facebook', 'Subs-Plugin'));
 	loadPluginTemplate('Dragooon:WeFB', 'templates/plugin');
@@ -49,19 +49,13 @@ function facebook_hook_load_theme()
 
 		$facebook = facebook_instance();
 
-		$url = Facebook::$DOMAIN_MAP['graph'] . '/oauth/access_token?' .
-                "client_id=" . $settings['facebook_app_id'].
-                "&client_secret=" . $settings['facebook_app_secret'] .
-                "&grant_type=client_credentials";
-		$access_token = file_get_contents($url);
-
 		updateSettings(array('facebook_real_time_token__temp' => $verify_token));
 
 		$subscription = $facebook->api('/' . $settings['facebook_app_id'] . '/subscriptions', 'POST', array(
-			'access_token' => substr($access_token, 13),
+			'access_token' => facebook_app_token(),
 			'object' => 'user',
 			'fields' => 'name,feed,birthday',
-			'callback_url' => $scripturl . '?action=facebook;area=update_callback',
+			'callback_url' => $context['plugins_url']['Dragooon:WeFB'] . '/callback.php',
 			'verify_token' => $verify_token,
 		));
 	}
@@ -86,33 +80,12 @@ function Facebook()
 		'login' => 'Facebook_login_redirect',
 		'login_return' => 'Facebook_login_return',
 		'register' => 'Facebook_register',
-		'update_callback' => 'Facebook_update_callback',
 	);
 	
 	if (isset($_REQUEST['area']) && isset($areas[$_REQUEST['area']]))
 		return $areas[$_REQUEST['area']]();
 	
 	redirectexit();
-}
-
-/**
- * Handles Facebook real time update callback
- *
- * @return void
- */
-function Facebook_update_callback()
-{
-	global $settings;
-
-	// Verifying?
-	if ($_GET['hub_mode'] == 'subscribe' && $_GET['hub_verify_token'] == $settings['facebook_real_time_token__temp'])
-	{
-		updateSettings(array('facebook_real_time_token' => $settings['facebook_real_time_token__temp']));
-		updateSettings(array('facebook_real_time_token__temp' => ''));
-
-		echo $_GET['hub_challenge'];
-		exit;
-	}
 }
 
 /**
