@@ -185,7 +185,7 @@ function Facebook_login_return()
 	$user_settings = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	if ($rows > 0)
+	if ($rows > 0 && $user_info['is_guest'])
 		// Log this user in
 		DoLogin();
 	// Otherwise register them if they're a guest
@@ -202,7 +202,7 @@ function Facebook_login_return()
 		wetem::load('facebook_create_password');
 	}
 	// Otherwise straight away assign them their FB ID
-	else
+	elseif ($rows == 0)
 	{
 		updateMemberData((array) $user_info['id'], array(
 			'facebook_id' => $me['id'],
@@ -210,6 +210,8 @@ function Facebook_login_return()
 
 		redirectexit('action=profile;area=facebook');
 	}
+	else
+		fatal_lang_error('facebook_user_already_exists');
 }
 
 /**
