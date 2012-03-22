@@ -104,3 +104,92 @@ function template_facebook_create_password()
 			</form>
 		</div>';
 }
+
+function template_facebook_profile()
+{
+	global $scripturl, $txt, $context, $settings;
+
+	echo '
+	<we:cat>
+		<img src="', $context['plugins_url']['Dragooon:WeFB'] . '/templates/images/adminicon.png" alt="" />
+		', $txt['facebook'], '
+	</we:cat>
+	<p class="windowbg description">', $txt['facebook_profile_desc'], '</p>';
+
+	if (empty($context['facebook']['id']))
+	{
+		echo '
+		<div class="windowbg wrc" id="creator">
+			<dl>
+				<dt>
+					<strong>', $txt['facebook_login'], '</strong>
+					<dfn>', $txt['facebook_profile_login_desc'], '</dfn>
+				</dt>
+				<dd>
+					<a href="', $scripturl, '?action=facebook;area=login">
+						<img alt="', $txt['facebook_login'], '" src="', $context['plugins_url']['Dragooon:WeFB'], '/templates/images/login.png" />
+					</a>
+				</dd>
+			</dl>
+		</div>';
+	}
+	else
+	{
+		echo '
+		<form action="', $scripturl, '?action=profile;area=facebook" id="creator" method="post">
+			<div class="windowbg wrc">
+				<dl>
+					<dt>
+						<strong>', $txt['facebook_status_ok'], '</strong>
+						<dfn>', $txt['facebook_logged_in'], '</strong>
+					</dt>
+					<dd>
+						', sprintf($txt['facebook_id'], $context['facebook']['id']), '
+					</dd>
+				</dl>
+				<hr />
+				<dl>
+					<dt>
+						<strong>', $txt['facebook_sync_name'], '</strong>
+						<dfn>', $txt['facebook_sync_name_subtext'], '</strong>
+					</dt>
+					<dd>
+						<input type="checkbox" name="facebook_fields[]" value="name"', in_array('name', $context['facebook']['fields']) ? ' checked' : '', ' />
+					</dd>
+					<dt>
+						<strong>', $txt['facebook_sync_birthday'], '</strong>
+						<dfn>', $txt['facebook_sync_birthday_subtext'], '</strong>
+					</dt>
+					<dd>
+						<input type="checkbox" name="facebook_fields[]" value="birthday"', in_array('birthday', $context['facebook']['fields']) ? ' checked' : '', ' />
+					</dd>
+					<dt>
+						<strong>', $txt['facebook_sync_feed'], '</strong>
+						<dfn>', $txt['facebook_sync_feed_subtext'], '</strong>
+					</dt>
+					<dd>
+						<input type="checkbox" name="facebook_fields[]" value="feed"', in_array('feed', $context['facebook']['fields']) ? ' checked' : '', ' />
+					</dd>
+					<dt>
+						<strong>', $txt['facebook_sync_thoughttofeed'], '</strong>
+						<dfn>', $txt['facebook_sync_thoughttofeed_subtext'], '</strong>
+					</dt>
+					<dd>
+						<input type="checkbox" name="facebook_fields[]" value="thoughttofeed"', in_array('thoughttofeed', $context['facebook']['fields']) ? ' checked' : '', ' />
+					</dd>
+					<dt>
+						<strong>', $txt['facebook_sync_topictofeed'], '</strong>
+						<dfn>', $txt['facebook_sync_topictofeed_subtext'], '</strong>
+					</dt>
+					<dd>
+						<input type="checkbox" name="facebook_fields[]" value="topictofeed"', in_array('topictofeed', $context['facebook']['fields']) ? ' checked' : '', ' />
+					</dd>
+				</dl>
+				<hr />
+				<div class="right">
+					<input type="submit" name="save" value="', $txt['save'], '" class="submit" />
+				</div>
+			</div>
+		</form>';
+	}
+}

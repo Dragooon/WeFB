@@ -64,6 +64,7 @@ function facebook_hook_load_theme()
 		wetem::first('sidebar', 'facebook_block');
 }
 
+/**
  * New topic hook, will create a post on Facebook for this topic
  *
  * @param array $msgOptions
@@ -104,6 +105,75 @@ function facebook_hook_create_post_after($msgOptions, $topicOptions, $posterOpti
 		'caption' => shorten_subject(strip_tags(parse_bbc($msgOptions['body'])), 120),
 	));
 }
+
+/**
+ * Hook callback for "profile_areas", adds facebook's profile area into the menu
+ *
+ * @param array $profile_areas
+ * @return void
+ */
+function facebook_hook_profile_areas($profile_areas)
+{
+	global $scripturl, $txt, $context;
+
+	$profile_areas['edit_profile']['areas']['facebook'] = array(
+		'label' => $txt['facebook'],
+		'enabled' => facebook_enabled() && $context['user']['is_owner'],
+		'function' => 'Facebook_profile',
+		'permission' => array(
+			'own' => array('profile_extra_own'),
+			'any' => array('profile_extra_any'),
+		),
+	);
+}
+
+/**
+ * Handles facebook profile area
+ *
+ * @param int $memID
+ * @return void
+ */
+function Facebook_profile($memID)
+{
+	global $scripturl, $settings, $txt, $context;
+
+	// Load this user's facebook info
+	$request = wesql::query('
+		SELECT facebook_id, facebook_fields
+		FROM {db_prefix}members
+		WHERE id_member = {int:member}',
+		array(
+			'member' => (int) $memID,
+		)
+	);
+	list ($id_facebook, $fields) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	$fields = explode(',', $fields);
+
+	// Saving the fields?
+	if (!empty($_POST['save']))
+	{
+		$_POST['facebook_fields'] = (array) $_POST['facebook_fields'];
+		foreach ($_POST['facebook_fields'] as $k => $field)
+			if (!in_array($field, array('name', 'birthday', 'feed', 'thoughttofeed', 'topictofeed')))
+				unset ($_POST['facebook_fields'][$k]);
+
+		updateMemberData((int) $memID, array(
+			'facebook_fields' => implode(',', $_POST['facebook_fields']),
+		));
+
+		redirectexit('action=profile;area=facebook');
+	}
+
+	// Load the template
+	$context['facebook'] = array(
+		'id' => $id_facebook,
+		'fields' => $fields,
+	);
+	wetem::load('facebook_profile');
+}
+
 /**
  * Handles "facebook" action and routes it to the correct sub-function
  * 
