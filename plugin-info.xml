@@ -8,6 +8,7 @@
   <required-functions>
     <php-function>curl_init</php-function>
     <php-function>json_decode</php-function>
+    <php-function>hash_hmac</php-function>
   </required-functions>
 
   <actions>
