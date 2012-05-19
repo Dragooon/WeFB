@@ -70,7 +70,7 @@ function facebook_hook_create_post_after($msgOptions, $topicOptions, $posterOpti
 		return true;
 	
 	// Get this member's information
-	list($id_member, $id_facebook, $fields) = facebooK_get_members($posterOptions['id']);
+	list ($id_member, $id_facebook, $fields) = array_values(facebook_get_members($posterOptions['id']));
 
 	// Not allowed to post the topic?
 	if (empty($id_facebook) || !in_array('topictofeed', $fields))
@@ -128,7 +128,7 @@ function facebook_hook_thought_add($privacy, $text, $id_parent, $id_master, $id_
 		return;
 	
 	// Get the member's info and make sure we should post this thought to his/her feed
-	list ($id_member, $id_facebook, $fields) = facebook_get_members($id_member);
+	list ($id_member, $id_facebook, $fields) = array_values(facebook_get_members($id_member));
 	if (empty($id_facebook) || !in_array('thoughttofeed', $fields))
 		return;
 	
@@ -149,7 +149,7 @@ function Facebook_profile($memID)
 	global $scripturl, $settings, $txt, $context;
 
 	// Load this user's facebook info
-	list ($id_member, $id_facebook, $fields) = facebook_get_members($memID);
+	list ($id_member, $id_facebook, $fields) = array_values(facebook_get_members($memID));
 
 	// Saving the fields?
 	if (!empty($_POST['save']))
