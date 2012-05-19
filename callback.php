@@ -51,22 +51,7 @@ foreach ($request['entry'] as $entry)
 	$users[$entry['uid']] = $entry['changed_fields'];
 
 // Let's fetch the members for the Facebook IDs
-$request = wesql::query('
-	SELECT id_member, facebook_id, facebook_fields
-	FROM {db_prefix}members
-	WHERE facebook_id IN ({array_string:fbids})',
-	array(
-		'fbids' => array_keys($users),
-	)
-);
-$members = array();
-while ($row = wesql::fetch_assoc($request))
-	$members[$row['id_member']] = array(
-		'id' => $row['id_member'],
-		'fbid' => $row['facebook_id'],
-		'fields' => explode(',', $row['facebook_fields']),
-	);
-wesql::free_result($request);
+$members = facebook_get_members(array_keys($users), true);
 
 // No members found?
 if (empty($members))

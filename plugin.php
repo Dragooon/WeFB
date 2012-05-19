@@ -70,19 +70,10 @@ function facebook_hook_create_post_after($msgOptions, $topicOptions, $posterOpti
 		return true;
 	
 	// Get this member's information
-	$request = wesql::query('
-		SELECT facebook_id, facebook_fields
-		FROM {db_prefix}members
-		WHERE id_member = {int:member}',
-		array(
-			'member' => $posterOptions['id'],
-		)
-	);
-	list ($id_facebook, $fields) = wesql::fetch_row($request);
-	wesql::free_result($request);
+	list($id_member, $id_facebook, $fields) = facebooK_get_member($posterOptions['id']);
 
 	// Not allowed to post the topic?
-	if (empty($id_facebook) || !in_array('topictofeed', explode(',', $fields)))
+	if (empty($id_facebook) || !in_array('topictofeed', $fields))
 		return true;
 	
 	// Post the topic to facebook
@@ -127,18 +118,7 @@ function Facebook_profile($memID)
 	global $scripturl, $settings, $txt, $context;
 
 	// Load this user's facebook info
-	$request = wesql::query('
-		SELECT facebook_id, facebook_fields
-		FROM {db_prefix}members
-		WHERE id_member = {int:member}',
-		array(
-			'member' => (int) $memID,
-		)
-	);
-	list ($id_facebook, $fields) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	$fields = explode(',', $fields);
+	list ($id_member, $id_facebook, $fields) = facebook_get_member($memID);
 
 	// Saving the fields?
 	if (!empty($_POST['save']))
