@@ -133,6 +133,10 @@ foreach ($changes['picture'] as $id_member => $id_facebook)
 // Update the latest thought
 if (!empty($changes['feed']))
 {
+	// Basically facebook will ping us for every new post by the user including links, apps etc.
+	// But we only need the actual status updates and not every other thing.
+	// For the same reason duplicates are checked in order to avoid the same message being posted twice
+	// or more times.
 	$queries = array();
 	foreach ($changes['feed'] as $id_member => $id_facebook)
 		$queries[$id_member] = 'SELECT message FROM stream WHERE source_id = ' . $id_facebook . ' AND type = 46 LIMIT 1';
@@ -149,27 +153,13 @@ if (!empty($changes['feed']))
 				$thoughts[$id_member] = $data['fql_result_set'][0]['message'];
 	}
 
-	// Check for duplicates
-	$request = wesql::query('
-		SELECT id_member
-		FROM {db_prefix}thoughts
-		WHERE id_member IN ({array_int:members})
-			AND thought IN ({array_string:thoughts})',
-		array(
-			'members' => array_keys($thoughts),
-			'thoughts' => array_values($thoughts),
-		)
-	);
-	$duplicates = array();
-	while ($row = wesql::fetch_assoc($request))
-		$duplicates[] = $row['id_member'];
-	wesql::free_result($request);
-
 	foreach ($thoughts as $id_member => $message)
 	{
-		$id_facebook = $changes['feed'][$id_member];
-		
-		if (in_array($id_member, $duplicates))
+		// Check for duplicates
+		//!!! Should the message be stored per-member or site-wide?
+		$cached_thought = cache_get_data('fb_last_thought_' . $id_member, 7 * 86400);
+
+		if ($cached_thought == null || $cached_thought['message'] == $message)
 			continue;
 
 		wesql::query('
@@ -185,6 +175,9 @@ if (!empty($changes['feed']))
 			)
 		);
 		$last_thought = wesql::insert_id();
+
+		// Cache this for several days in order to prevent duplicates
+		cache_put_data('fb_last_thought_' . $id_member, array('message' => $message), 7 * 86400);
 
 		if (!empty($last_thought))
 			updateMemberData($id_member, array('personal_text' => $message));
