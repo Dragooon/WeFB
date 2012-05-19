@@ -19,7 +19,8 @@
     <function point="load_theme" function="facebook_hook_load_theme" filename="$plugindir/plugin" />
     <function point="profile_areas" function="facebook_hook_profile_areas" filename="$plugindir/plugin" />
     <function point="create_post_after" function="facebook_hook_create_post_after" filename="$plugindir/plugin" />
-  
+    <function point="thought_add" function="facebook_hook_thought_add" filename="$plugindir/plugin" />
+
     <provides>
       <!--
           facebook_register hook, called as soon as someone registers via Facebook

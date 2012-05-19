@@ -70,7 +70,7 @@ function facebook_hook_create_post_after($msgOptions, $topicOptions, $posterOpti
 		return true;
 	
 	// Get this member's information
-	list($id_member, $id_facebook, $fields) = facebooK_get_member($posterOptions['id']);
+	list($id_member, $id_facebook, $fields) = facebooK_get_members($posterOptions['id']);
 
 	// Not allowed to post the topic?
 	if (empty($id_facebook) || !in_array('topictofeed', $fields))
@@ -108,6 +108,37 @@ function facebook_hook_profile_areas($profile_areas)
 }
 
 /**
+ * Hook callback for "thought_add", posts facebook's thoughts into facebook's wall
+ *
+ * @param string $privacy
+ * @param string $text
+ * @param int $id_parent
+ * @param int $id_master
+ * @param int $id_thought
+ * @param int $id_member
+ * @param string $member_name
+ * @return void
+ */
+function facebook_hook_thought_add($privacy, $text, $id_parent, $id_master, $id_thought, $id_member, $member_name)
+{
+	global $scripturl, $txt, $context;
+
+	// Irrelevant thought?
+	if ($id_parent != 0 || $id_master != 0 || $privacy != '-3')
+		return;
+	
+	// Get the member's info and make sure we should post this thought to his/her feed
+	list ($id_member, $id_facebook, $fields) = facebook_get_members($id_member);
+	if (empty($id_facebook) || !in_array('thoughttofeed', $fields))
+		return;
+	
+	// Post this thought to the feed
+	$facebook = facebook_instance();
+	$facebook->api('/' . $id_facebook . '/feed', 'POST', array(
+		'message' => $text,
+	));
+}
+/**
  * Handles facebook profile area
  *
  * @param int $memID
@@ -118,7 +149,7 @@ function Facebook_profile($memID)
 	global $scripturl, $settings, $txt, $context;
 
 	// Load this user's facebook info
-	list ($id_member, $id_facebook, $fields) = facebook_get_member($memID);
+	list ($id_member, $id_facebook, $fields) = facebook_get_members($memID);
 
 	// Saving the fields?
 	if (!empty($_POST['save']))
