@@ -132,6 +132,15 @@ function Facebook_profile($memID)
 			'facebook_fields' => implode(',', $_POST['facebook_fields']),
 		));
 
+		// Update the caches
+		$cache_data = array(
+			'id' => $id_member,
+			'fbid' => $id_facebook,
+			'fields' => $_POST['facebook_fields'],
+		);
+		cache_put_data('fb_id_facebook_' . $id_facebook, $cache_data, 86400);
+		cache_put_data('fb_id_member_' . $id_member, $cache_data, 86400);
+
 		redirectexit('action=profile;area=facebook');
 	}
 
