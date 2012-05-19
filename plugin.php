@@ -369,6 +369,10 @@ function Facebook_register()
 		call_hook('facebook_register', array($id_member, $me['id']));
 
 		setLoginCookie(60 * $settings['cookieTime'], $id_member, sha1(sha1(strtolower($regOptions['username']) . $regOptions['password']) . $regOptions['register_vars']['password_salt']));
+
+		// Redirect them to FB profile area by default
+		$_SESSION['login_url'] = 'action=profile;area=facebook';
+
 		redirectexit('action=login2;sa=check;member=' . $id_member, $context['server']['needs_login_fix']);
 	}
 }
