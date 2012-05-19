@@ -359,7 +359,7 @@ function Facebook_register()
 
 		updateMemberData((array) $id_member, array(
 			'facebook_id' => $_SESSION['facebook_info']['id'],
-			'facebook_fields' => 'name,birthday,picture,feed,thoughttofeed,topictofeed',
+			'facebook_fields' => 'name,birthday,picture',
 		));
 
 		// We run this since it is supposed to be run anyway
