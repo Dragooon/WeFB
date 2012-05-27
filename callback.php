@@ -149,7 +149,7 @@ if (!empty($changes['feed']))
 		//!!! Should the message be stored per-member or site-wide?
 		$cached_thought = cache_get_data('fb_last_thought_' . $id_member, 7 * 86400);
 
-		if ($cached_thought == null || $cached_thought['message'] == $message)
+		if ($cached_thought != null && $cached_thought['message'] == $message)
 			continue;
 
 		wesql::query('
