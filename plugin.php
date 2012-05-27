@@ -121,14 +121,14 @@ function facebook_hook_profile_areas($profile_areas)
  */
 function facebook_hook_thought_add($privacy, $text, $id_parent, $id_master, $id_thought, $id_member, $member_name)
 {
-	global $scripturl, $txt, $context;
+	global $scripturl, $txt, $context, $user_info;
 
 	// Irrelevant thought?
 	if ($id_parent != 0 || $id_master != 0 || $privacy != '-3')
 		return;
 	
 	// Get the member's info and make sure we should post this thought to his/her feed
-	list ($id_member, $id_facebook, $fields) = array_values(facebook_get_members($id_member));
+	list ($id_member, $id_facebook, $fields) = array_values(facebook_get_members($user_info['id']));
 	if (empty($id_facebook) || !in_array('thoughttofeed', $fields))
 		return;
 	
