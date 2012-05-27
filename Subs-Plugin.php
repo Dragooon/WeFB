@@ -74,7 +74,7 @@ function facebook_get_members($id_member, $by_id_facebook = false)
 	{
 		$cache_data = cache_get_data($cache_key . $id, 86400);
 
-		if ($cache_data !== null)
+		if ($cache_data !== null && !empty($cache_data['id_member']))
 		{
 			if (is_array($id_member))
 				unset($id_member[$k]);
