@@ -11,6 +11,8 @@
  * @version 1.0
  */
 
+ob_start();
+
 require_once('../../SSI.php');
 
 global $settings, $context;
@@ -26,6 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET['hub_mode']) &&
 {
 	updateSettings(array('facebook_real_time_token' => $settings['facebook_real_time_token__temp']));
 	updateSettings(array('facebook_real_time_token__temp' => ''));
+
+	ob_end_clean();
 
 	echo $_GET['hub_challenge'];
 	exit;
