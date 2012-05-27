@@ -132,6 +132,9 @@ function facebook_hook_thought_add($privacy, $text, $id_parent, $id_master, $id_
 	if (empty($id_facebook) || !in_array('thoughttofeed', $fields))
 		return;
 	
+	// Cache it to prevent facebook updating our own thought...
+	cache_put_data('fb_last_thought_' . $user_info['id'], array('message' => $text), 7 * 86400);
+
 	// Post this thought to the feed
 	$facebook = facebook_instance();
 	$facebook->api('/' . $id_facebook . '/feed', 'POST', array(
