@@ -91,7 +91,7 @@ function facebook_get_members($id_member, $by_id_facebook = false)
 		$request = wesql::query('
 			SELECT id_member, facebook_id, facebook_fields
 			FROM {db_prefix}members
-			WHERE ' . ($by_id_facebook ? 'facebook_ids' : 'id_member') . ' IN ({array_string:ids})',
+			WHERE ' . ($by_id_facebook ? 'facebook_id' : 'id_member') . ' IN ({array_string:ids})',
 			array(
 				'ids' => (array) $id_member,
 			)
