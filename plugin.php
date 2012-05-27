@@ -43,7 +43,7 @@ function facebook_hook_load_theme()
 		$subscription = $facebook->api('/' . $settings['facebook_app_id'] . '/subscriptions', 'POST', array(
 			'access_token' => facebook_app_token(),
 			'object' => 'user',
-			'fields' => 'name,feed,birthday',
+			'fields' => 'name,feed,birthday,pic',
 			'callback_url' => $context['plugins_url']['Dragooon:WeFB'] . '/callback.php',
 			'verify_token' => $verify_token,
 		));

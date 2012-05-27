@@ -16,6 +16,7 @@ require_once('../../SSI.php');
 global $settings, $context;
 
 loadPluginSource('Dragooon:WeFB', array('facebook', 'Subs-Plugin'));
+loadSource(array('Subs-Members', 'Subs-Graphics'));
 
 $facebook = facebook_instance();
 
@@ -72,7 +73,7 @@ foreach ($members as $mem)
 	$hook_users[$mem['id']] = array($mem['fbid'], $changed_fields, $mem['fields']);
 
 	foreach ($changes as $tochange => $members)
-		if (in_array($tochange, $changed_fields) && in_array($tochange, $mem['fields']))
+		if (in_array($tochange == 'picture' ? 'pic' : $tochange, $changed_fields) && in_array($tochange, $mem['fields']))
 			$changes[$tochange][$mem['id']] = $mem['fbid'];
 }
 
